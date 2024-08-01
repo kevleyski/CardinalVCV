@@ -173,7 +173,7 @@ endif
 
 deps:
 ifeq ($(SYSDEPS),true)
-	$(MAKE) quickjs surge -C deps
+	$(MAKE) quickjs -C deps
 else
 	$(MAKE) all -C deps
 endif
@@ -371,10 +371,6 @@ TAR_ARGS = \
 	--exclude=plugins/BogaudioModules/res-src \
 	--exclude=plugins/Cardinal/orig \
 	--exclude=plugins/GrandeModular/res-src \
-	--exclude=plugins/surgext/surge/libs/JUCE \
-	--exclude=plugins/surgext/surge/resources/data/patches_3rdparty \
-	--exclude=plugins/surgext/surge/resources/data/patches_factory \
-	--exclude=plugins/surgext/surge/resources/data/wavetables_3rdparty \
 	--exclude=src/Rack/adapters \
 	--exclude=src/Rack/dep/filesystem/cmake \
 	--exclude=src/Rack/dep/filesystem/examples \

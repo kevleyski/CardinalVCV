@@ -248,67 +248,6 @@ $(RACK_DEP_PATH)/lib/libquickjs.a:
 	install -m644 $(CURDIR)/QuickJS/libquickjs.a $@
 	install -m644 $(CURDIR)/QuickJS/quickjs.h $(RACK_DEP_PATH)/include/quickjs.h
 
-# --------------------------------------------------------------
-# SurgeXT target
-
-SURGE_DEP_PATH = $(abspath surge-build)
-SURGE_SRC_PATH = $(abspath ../plugins/surgext/surge)
-SURGE_NAMES = HysteresisProcessing Patch SolverType Tunings Wavetable clouds ghc plaits stmlib
-
-SURGE_CXX_FLAGS  = $(filter-out -fsingle-precision-constant,$(filter-out -std=gnu++11,$(BUILD_CXX_FLAGS)))
-SURGE_CXX_FLAGS += $(foreach n,$(SURGE_NAMES),-D$(n)=surgext$(n))
-
-# fix build with gcc13
-SURGE_CXX_FLAGS += -include cstdint
-
-# fix JUCE build https://github.com/juce-framework/JUCE/issues/374
-ifeq ($(CPU_I386),true)
-SURGE_CXX_FLAGS += -D__sigemptyset=sigemptyset
-endif
-
-# use custom JUCE
-SURGE_CXX_FLAGS += -I$(abspath ../deps/JUCE/modules)
-
-# possibly use fftw?
-# ifeq ($(shell $(PKG_CONFIG) --exists fftw3 fftw3f && echo true),true)
-# SURGE_CXX_FLAGS += -DJUCE_DSP_USE_STATIC_FFTW=1
-# endif
-
-# JUCE_USE_CURL
-SURGE_ENV = env \
-	AR=$(AR) \
-	CC=$(CC) \
-	CXX=$(CXX) \
-	CFLAGS='$(BUILD_C_FLAGS) -w' \
-	CXXFLAGS='$(SURGE_CXX_FLAGS) -w' \
-	LDFLAGS='$(LINK_FLAGS)'
-
-SURGE_LIB = $(SURGE_DEP_PATH)/src/common/libsurge-common.a
-
-$(SURGE_LIB): $(SURGE_DEP_PATH)/Makefile
-	+$(DEP_MAKE) -C $(SURGE_DEP_PATH) surge-common
-
-$(SURGE_DEP_PATH)/Makefile: $(SURGE_SRC_PATH)/CMakeLists.txt
-	mkdir -p $(SURGE_DEP_PATH)
-	cd $(SURGE_DEP_PATH) && \
-		$(SURGE_ENV) $(CMAKE) \
-		-DSURGE_BUILD_32BIT_LINUX=TRUE \
-		-DSURGE_COMPILE_BLOCK_SIZE=8 \
-		-DSURGE_SKIP_AIRWINDOWS=TRUE \
-		-DSURGE_SKIP_JUCE_FOR_RACK=TRUE \
-		-DSURGE_SKIP_LUA=TRUE \
-		-DSURGE_SKIP_ODDSOUND_MTS=TRUE \
-		-DSURGE_JUCE_PATH=$(abspath ../deps/JUCE) \
-		-DSURGE_SIMDE_PATH=$(abspath ../src/Rack/dep/simde) \
-		$(SURGE_SRC_PATH)
-
-# --------------------------------------------------------------
-# Build targets
-
-ifneq ($(NOPLUGINS),true)
-TARGETS += $(SURGE_LIB)
-endif
-
 TARGETS += $(RACK_DEP_PATH)/lib/libjansson.a
 TARGETS += $(RACK_DEP_PATH)/lib/libquickjs.a
 TARGETS += $(RACK_DEP_PATH)/lib/libsamplerate.a
@@ -343,7 +282,6 @@ clean:
 	rm -rf $(RACK_DEP_PATH)/speexdsp/libspeexdsp/*.o
 	rm -rf $(RACK_DEP_PATH)/speexdsp/Makefile
 	rm -rf $(RACK_DEP_PATH)/zstd-1.4.5
-	rm -rf $(SURGE_DEP_PATH)
 
 download: \
 	$(RACK_DEP_PATH)/jansson-2.12 \
@@ -352,6 +290,5 @@ download: \
 	$(RACK_DEP_PATH)/zstd-1.4.5/.stamp-patched
 
 quickjs: $(RACK_DEP_PATH)/lib/libquickjs.a
-surge: $(SURGE_LIB)
 
 # --------------------------------------------------------------

@@ -67,11 +67,6 @@ extern Model* modelUnison;
 #undef loadBack
 std::string loadBack(int) { return "res/Empty_gray.svg"; }
 
-// surgext
-#include "surgext/src/SurgeXT.h"
-void surgext_rack_initialize();
-void surgext_rack_update_theme();
-
 // ValleyAudio
 #include "ValleyAudio/src/Valley.hpp"
 
@@ -85,7 +80,6 @@ Plugin* pluginInstance__Aria;
 Plugin* pluginInstance__AudibleInstruments;
 Plugin* pluginInstance__BogaudioModules;
 Plugin* pluginInstance__MockbaModular;
-Plugin* pluginInstance__surgext;
 Plugin* pluginInstance__ValleyAudio;
 
 namespace rack {
@@ -525,95 +519,6 @@ static void initStatic__MockbaModular()
     }
 }
 
-static void initStatic__surgext()
-{
-    Plugin* const p = new Plugin;
-    pluginInstance__surgext = p;
-
-    const StaticPluginLoader spl(p, "surgext");
-    if (spl.ok())
-    {
-        p->addModel(modelVCOModern);
-        p->addModel(modelVCOSine);
-        /*
-        p->addModel(modelVCOAlias);
-        p->addModel(modelVCOClassic);
-        p->addModel(modelVCOFM2);
-        p->addModel(modelVCOFM3);
-        p->addModel(modelVCOSHNoise);
-        p->addModel(modelVCOString);
-        p->addModel(modelVCOTwist);
-        p->addModel(modelVCOWavetable);
-        p->addModel(modelVCOWindow);
-        */
-        spl.removeModule("SurgeXTOSCAlias");
-        spl.removeModule("SurgeXTOSCClassic");
-        spl.removeModule("SurgeXTOSCFM2");
-        spl.removeModule("SurgeXTOSCFM3");
-        spl.removeModule("SurgeXTOSCSHNoise");
-        spl.removeModule("SurgeXTOSCString");
-        spl.removeModule("SurgeXTOSCTwist");
-        spl.removeModule("SurgeXTOSCWavetable");
-        spl.removeModule("SurgeXTOSCWindow");
-
-        // Add the ported ones
-        p->addModel(modelSurgeLFO);
-        p->addModel(modelSurgeMixer);
-        p->addModel(modelSurgeMixerSlider);
-        p->addModel(modelSurgeModMatrix);
-        p->addModel(modelSurgeWaveshaper);
-        /*
-        p->addModel(modelSurgeDelay);
-        p->addModel(modelSurgeDelayLineByFreq);
-        p->addModel(modelSurgeDelayLineByFreqExpanded);
-        p->addModel(modelSurgeDigitalRingMods);
-        p->addModel(modelSurgeVCF);
-        */
-        spl.removeModule("SurgeXTDelay");
-        spl.removeModule("SurgeXTDelayLineByFreq");
-        spl.removeModule("SurgeXTDelayLineByFreqExpanded");
-        spl.removeModule("SurgeXTDigitalRingMod");
-        spl.removeModule("SurgeXTVCF");
-
-        p->addModel(modelFXNimbus);
-        spl.removeModule("SurgeXTFXBonsai");
-        spl.removeModule("SurgeXTFXChorus");
-        spl.removeModule("SurgeXTFXChow");
-        spl.removeModule("SurgeXTFXCombulator");
-        spl.removeModule("SurgeXTDigitalRingMod");
-        spl.removeModule("SurgeXTFXDistortion");
-        spl.removeModule("SurgeXTFXExciter");
-        spl.removeModule("SurgeXTFXEnsemble");
-        spl.removeModule("SurgeXTFXFlanger");
-        spl.removeModule("SurgeXTFXFrequencyShifter");
-        spl.removeModule("SurgeXTFXNeuron");
-        spl.removeModule("SurgeXTFXPhaser");
-        spl.removeModule("SurgeXTFXResonator");
-        spl.removeModule("SurgeXTFXReverb");
-        spl.removeModule("SurgeXTFXReverb2");
-        spl.removeModule("SurgeXTFXRingMod");
-        spl.removeModule("SurgeXTFXRotarySpeaker");
-        spl.removeModule("SurgeXTFXSpringReverb");
-        spl.removeModule("SurgeXTFXTreeMonster");
-        spl.removeModule("SurgeXTFXVocoder");
-
-        /*
-        p->addModel(modelEGxVCA);
-        p->addModel(modelQuadAD);
-        p->addModel(modelQuadLFO);
-        p->addModel(modelUnisonHelper);
-        p->addModel(modelUnisonHelperCVExpander);
-        */
-        spl.removeModule("SurgeXTEGxVCA");
-        spl.removeModule("SurgeXTQuadAD");
-        spl.removeModule("SurgeXTQuadLFO");
-        spl.removeModule("SurgeXTUnisonHelper");
-        spl.removeModule("SurgeXTUnisonHelperCVExpander");
-
-        surgext_rack_initialize();
-    }
-}
-
 /*
 static void initStatic__ValleyAudio()
 {
@@ -644,7 +549,6 @@ void initStaticPlugins()
     initStatic__AudibleInstruments();
     initStatic__BogaudioModules();
     initStatic__MockbaModular();
-    initStatic__surgext();
     /*
     initStatic__ValleyAudio();
     */
@@ -669,10 +573,6 @@ void updateStaticPluginsDarkMode()
         for (auto listener : skins._defaultSkinListeners) {
             listener->defaultSkinChanged(skins._default);
         }
-    }
-    // surgext
-    {
-        surgext_rack_update_theme();
     }
 }
 

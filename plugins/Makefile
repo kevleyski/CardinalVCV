@@ -1078,90 +1078,6 @@ STOERMELDER_PACKONE_CUSTOM = LongPressButton
 STOERMELDER_PACKONE_CUSTOM_PER_FILE = InputLedDisplay IntermixEnvModule
 
 # --------------------------------------------------------------
-# surgext
-
-PLUGIN_FILES += $(filter-out surgext/src/SurgeXT.cpp,$(wildcard surgext/src/*.cpp))
-PLUGIN_FILES += surgext-helper/surgext-helper.cpp
-
-# modules/types which are present in other plugins
-SURGEXT_CUSTOM = HysteresisProcessing Patch SolverType Tunings Wavetable ghc clouds plaits stmlib
-
-SURGEXT_FLAGS  = $(filter-out -fsingle-precision-constant,$(filter-out -std=gnu++11,$(BUILD_CXX_FLAGS)))
-SURGEXT_FLAGS += -std=gnu++17
-SURGEXT_FLAGS += -DTIXML_USE_STL=1
-SURGEXT_FLAGS += \
-	-Isurgext/libs/sst-rackhelpers/include \
-	-Isurgext/surge/src/common \
-	-Isurgext/surge/src/common/dsp \
-	-Isurgext/surge/src/common/dsp/filters \
-	-Isurgext/surge/src/common/dsp/vembertech \
-	-Isurgext/surge/src/common/dsp/utilities \
-	-Isurgext/surge/src/common/dsp/oscillators \
-	-Isurgext/surge/src/common/dsp/modulators \
-	-Isurgext/surge/src/surge-testrunner \
-	-Isurgext/surge/libs/fmt/include \
-	-Isurgext/surge/libs/LuaJitLib/LuaJIT/src \
-	-Isurgext/surge/libs/sst/sst-basic-blocks/include \
-	-Isurgext/surge/libs/sst/sst-cpputils/include \
-	-Isurgext/surge/libs/sst/sst-effects/include \
-	-Isurgext/surge/libs/sst/sst-filters/include \
-	-Isurgext/surge/libs/sst/sst-plugininfra/include \
-	-Isurgext/surge/libs/sst/sst-plugininfra/libs/tinyxml/include \
-	-Isurgext/surge/libs/sst/sst-plugininfra/libs/filesystem \
-	-Isurgext/surge/libs/sst/sst-waveshapers/include \
-	-Isurgext/surge/libs/strnatcmp \
-	-Isurgext/surge/src/headless \
-	-Isurgext/surge/libs/tuning-library/include \
-	-I../deps/surge-build/libs/sst/sst-plugininfra/libs/filesystem/include \
-	-DSURGE_COMPILE_BLOCK_SIZE=8 \
-	-DSURGE_SKIP_ODDSOUND_MTS \
-	-DHAS_LUA=0 \
-	-DHAS_JUCE=0 \
-	-DSKIP_JUCE=1
-
-ifneq ($(DEBUG),true)
-SURGEXT_FLAGS += -DRELEASE=1
-endif
-
-ifeq ($(MACOS),true)
-SURGEXT_FLAGS += -Wno-undefined-bool-conversion -Wno-unused-variable -Wno-reorder -Wno-char-subscripts -Wno-sign-compare -Wno-ignored-qualifiers -Wno-c++17-extensions -Wno-unused-private-field
-SURGEXT_FLAGS += -DMAC
-else ifeq ($(WINDOWS),true)
-SURGEXT_FLAGS += -Wno-suggest-override -Wno-sign-compare -Wno-ignored-qualifiers -Wno-unused-variable -Wno-char-subscripts -Wno-reorder -Wno-int-in-bool-context
-SURGEXT_FLAGS += -DWINDOWS
-SURGEXT_FLAGS += -DSKIP_MINGW_FORMAT
-else
-SURGEXT_FLAGS += -Wno-unused-value -Wno-suggest-override -Wno-implicit-fallthrough -Wno-ignored-qualifiers
-SURGEXT_FLAGS += -Wno-nonnull-compare -Wno-sign-compare -Wno-char-subscripts -Wno-unused-variable -Wno-unused-but-set-variable -Wno-reorder -Wno-multichar
-SURGEXT_FLAGS += -DLINUX
-SURGEXT_FLAGS += -Isurge/src/linux
-endif
-
-SURGEXT_FLAGS += -DSURGE_RACK_BASE_VERSION=XT1-0-1
-SURGEXT_FLAGS += -DSURGE_RACK_PLUG_VERSION=Cardinal
-SURGEXT_FLAGS += -DSURGE_RACK_SURGE_VERSION=Cardinal
-
-SURGEXT_FLAGS += -I$(abspath ../carla/source/modules)
-
-MINIPLUGIN_FILES += surgext/src/Delay.cpp
-MINIPLUGIN_FILES += surgext/src/DelayLineByFreq.cpp
-MINIPLUGIN_FILES += surgext/src/DelayLineByFreqExpanded.cpp
-MINIPLUGIN_FILES += surgext/src/EGxVCA.cpp
-MINIPLUGIN_FILES += surgext/src/FX.cpp
-MINIPLUGIN_FILES += surgext/src/LFO.cpp
-MINIPLUGIN_FILES += surgext/src/Mixer.cpp
-MINIPLUGIN_FILES += surgext/src/ModMatrix.cpp
-MINIPLUGIN_FILES += surgext/src/QuadAD.cpp
-MINIPLUGIN_FILES += surgext/src/QuadLFO.cpp
-MINIPLUGIN_FILES += surgext/src/VCO.cpp
-MINIPLUGIN_FILES += surgext/src/VCF.cpp
-MINIPLUGIN_FILES += surgext/src/Waveshaper.cpp
-MINIPLUGIN_FILES += surgext/src/XTModule.cpp
-MINIPLUGIN_FILES += surgext/src/XTModuleWidget.cpp
-MINIPLUGIN_FILES += surgext/src/XTStyle.cpp
-MINIPLUGIN_FILES += surgext-helper/surgext-helper.cpp
-
-# --------------------------------------------------------------
 # unless_modules
 
 PLUGIN_FILES += $(filter-out unless_modules/src/unless.cpp,$(wildcard unless_modules/src/*.cpp))
@@ -1423,7 +1339,6 @@ endif
 clean:
 	rm -f *.a
 	rm -rf $(BUILD_DIR)
-	rm -rf surgext/build
 
 # --------------------------------------------------------------
 
@@ -1468,21 +1383,11 @@ RESOURCE_FILES += MindMeldModular/res/ShapeMaster/MindMeldShapes
 RESOURCE_FILES += Mog/res
 RESOURCE_FILES += nonlinearcircuits/res
 RESOURCE_FILES += ParableInstruments/res/Neil.png
-RESOURCE_FILES += surgext/build/surge-data/configuration.xml
-RESOURCE_FILES += surgext/build/surge-data/fx_presets
-RESOURCE_FILES += surgext/build/surge-data/wavetables
-RESOURCE_FILES += surgext/build/surge-data/windows.wt
 RESOURCE_FILES += $(wildcard StarlingVia/res/original.*)
-RESOURCE_FILES += $(wildcard surgext/res/xt/fonts/quicksand/*.ttf)
 RESOURCE_FILES += $(wildcard unless_modules/art/*.art)
 RESOURCE_FILES += $(wildcard unless_modules/art/svg/*/*.svg)
 RESOURCE_FILES += $(wildcard unless_modules/font/*.ttf)
 # RESOURCE_FILES += $(wildcard unless_modules/manual/*)
-
-JACK_RESOURCES  = $(CURDIR)/surgext/build/surge-data/configuration.xml
-JACK_RESOURCES += $(CURDIR)/surgext/build/surge-data/fx_presets
-JACK_RESOURCES += $(CURDIR)/surgext/build/surge-data/wavetables
-JACK_RESOURCES += $(CURDIR)/surgext/build/surge-data/windows.wt
 
 RESOURCE_FILES += $(wildcard Cardinal/res/*.png)
 RESOURCE_FILES += Cardinal/res/Miku/Miku.png
@@ -1493,7 +1398,6 @@ MINIPLUGIN_LIST    += AudibleInstruments
 MINIPLUGIN_LIST    += BogaudioModules
 MINIPLUGIN_LIST    += Fundamental
 MINIPLUGIN_LIST    += MockbaModular
-MINIPLUGIN_LIST    += surgext
 # MINIPLUGIN_LIST    += ValleyAudio
 
 MINIRESOURCE_FILES  = AriaModules/res/components/jack-transparent.svg
@@ -1688,37 +1592,6 @@ MINIRESOURCE_FILES += MockbaModular/res/ReVoltah.svg
 MINIRESOURCE_FILES += MockbaModular/res/screw.svg
 MINIRESOURCE_FILES += MockbaModular/res/selector.svg
 MINIRESOURCE_FILES += MockbaModular/res/Shapah.svg
-
-MINIRESOURCE_FILES += surgext/build/surge-data/configuration.xml
-MINIRESOURCE_FILES += surgext/build/surge-data/windows.wt
-MINIRESOURCE_FILES += surgext/res/xt/fonts/quicksand/Quicksand-Regular.ttf
-MINIRESOURCE_FILES += surgext/res/xt/fonts/quicksand/Quicksand-Bold.ttf
-MINIRESOURCE_FILES += surgext/res/xt/dark/components/fader_bg.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/components/fader_bg_25.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/components/fader_handle.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/components/knob-9.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/components/knob-12.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/components/knob-14.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/components/knob-16.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/components/knob-pointer-9.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/components/knob-pointer-12.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/components/knob-pointer-14.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/components/knob-pointer-16.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/components/mod-button.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/components/port.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/panels/fx/BlankNoDisplay.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/panels/other/EGLFO.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/panels/other/Matrix.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/panels/other/Mixer.svg
-MINIRESOURCE_FILES += surgext/res/xt/dark/panels/vco/BlankVCO.svg
-MINIRESOURCE_FILES += surgext/res/xt/glyphs/lt_0.svg
-MINIRESOURCE_FILES += surgext/res/xt/glyphs/lt_1.svg
-MINIRESOURCE_FILES += surgext/res/xt/glyphs/lt_2.svg
-MINIRESOURCE_FILES += surgext/res/xt/glyphs/lt_3.svg
-MINIRESOURCE_FILES += surgext/res/xt/glyphs/lt_4.svg
-MINIRESOURCE_FILES += surgext/res/xt/glyphs/lt_5.svg
-MINIRESOURCE_FILES += surgext/res/xt/glyphs/lt_6.svg
-MINIRESOURCE_FILES += surgext/res/xt/glyphs/lt_7.svg
 
 # MINIRESOURCE_FILES += ValleyAudio/res/DexterPanelDark.svg
 # MINIRESOURCE_FILES += ValleyAudio/res/InterzonePanelDark.svg
@@ -2007,23 +1880,6 @@ else
 	-@mkdir -p "$(shell dirname $@)"
 	$(SILENT)ln -sf $(abspath $<) $@
 endif
-
-%/surgext/build/surge-data/configuration.xml: surgext/surge/resources/surge-shared/configuration.xml
-	-@mkdir -p "$(shell dirname $@)"
-	$(SILENT)ln -sf $(abspath $<) $@
-
-%/surgext/build/surge-data/fx_presets:
-	-@mkdir -p "$@"
-	cp -R surgext/surge/resources/data/fx_presets/* $@/
-	cp -R surgext/res/surge_extra_data/fx_presets/* $@/
-
-%/surgext/build/surge-data/wavetables: surgext/surge/resources/data/wavetables
-	-@mkdir -p "$(shell dirname $@)"
-	$(SILENT)ln -sf $(abspath $<) $@
-
-%/surgext/build/surge-data/windows.wt: surgext/surge/resources/surge-shared/windows.wt
-	-@mkdir -p "$(shell dirname $@)"
-	$(SILENT)ln -sf $(abspath $<) $@
 
 # --------------------------------------------------------------
 # Build commands
@@ -2762,13 +2618,6 @@ $(BUILD_DIR)/stocaudio/%.cpp.o: stocaudio/%.cpp
 	$(SILENT)$(CXX) $< $(BUILD_CXX_FLAGS) -c -o $@ \
 		$(foreach m,$(STOCAUDIO_CUSTOM),$(call custom_module_names,$(m),stocaudio)) \
 		-DpluginInstance=pluginInstance__stocaudio
-
-$(BUILD_DIR)/surgext%.cpp.o: surgext%.cpp
-	-@mkdir -p "$(shell dirname $(BUILD_DIR)/$<)"
-	@echo "Compiling $<"
-	$(SILENT)$(CXX) $< $(SURGEXT_FLAGS) -c -o $@ \
-		$(foreach m,$(SURGEXT_CUSTOM),$(call custom_module_names,$(m),surgext)) \
-		-DpluginInstance=pluginInstance__surgext
 
 $(BUILD_DIR)/unless_modules/%.cpp.o: unless_modules/%.cpp
 	-@mkdir -p "$(shell dirname $(BUILD_DIR)/$<)"
